@@ -27,7 +27,7 @@ always @(posedge clk or negedge rst_n)begin
         en_reg_pwm_15_8 <= 8'b0;
         pwm_duty_cycle <= 8'b0;
         count <= 5'b0;
-    end begin
+    end else begin
         prevCS[0] <= cs;
         prevCS[1] <= prevCS[0];
         prevSCLK[0] <= SCLK;
