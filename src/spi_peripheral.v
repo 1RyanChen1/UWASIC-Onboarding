@@ -11,12 +11,12 @@ reg [15:0] data;
 reg [1:0] prevSCLK,prevCS,prevCOPI; 
 wire sclk_rise,sclk_fall,nsc_fall, nsc_rise;
 
-always @(*) begin
-    nsc_fall = prevCS[0] & !prevCS[1];
-    nsc_rise = !prevCS[0] & prevCS[1];
-    sclk_fall = prevSCLK[0] & !prevSCLK[1];
-    sclk_rise = !prevSCLK[0] & prevSCLK[1];
-end
+
+assign    nsc_fall = prevCS[0] & !prevCS[1];
+assign    nsc_rise = !prevCS[0] & prevCS[1];
+assign    sclk_fall = prevSCLK[0] & !prevSCLK[1];
+assign    sclk_rise = !prevSCLK[0] & prevSCLK[1];
+
 
 always @(posedge clk or negedge rst_n)begin
 
