@@ -40,21 +40,19 @@ always @(posedge clk or negedge rst_n)begin
         end else if (sclk_rise) begin
             if (count == 5'd16) begin
                 count<=5'b0;
-            end else begin
+            end else if(data[0]) begin
                 count <= count + 1;
                 data[count] = prevCOPI[1];
             end
-        end else if(nsc_rise) begin
-            if (data[0] && data[7:1] <= 7'd4 && count == 5'd16) begin
-                case (data[7:1])
-                    7'h00: en_reg_out_7_0 <= data[15:8];
-                    7'h01: en_reg_out_15_8 <= data[15:8];
-                    7'h02: en_reg_pwm_7_0 <= data[15:8];
-                    7'h03: en_reg_pwm_15_8 <= data[15:8];
-                    7'h04: pwm_duty_cycle <= data[15:8];
-                    default: ;
-                endcase                    
-            end 
+        end else if(nsc_rise && data[0] && data[7:1] <= 7'd4 && count == 5'd16) begin
+            case (data[7:1])
+                7'h00: en_reg_out_7_0 <= data[15:8];
+                7'h01: en_reg_out_15_8 <= data[15:8];
+                7'h02: en_reg_pwm_7_0 <= data[15:8];
+                7'h03: en_reg_pwm_15_8 <= data[15:8];
+                7'h04: pwm_duty_cycle <= data[15:8];
+                default: ;
+            endcase                     
         end
 
     end   
