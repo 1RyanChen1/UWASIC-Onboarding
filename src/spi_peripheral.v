@@ -42,7 +42,7 @@ always @(posedge clk or negedge rst_n)begin
                 count<=5'b0;
             end else if(data[0]) begin
                 count <= count + 1;
-                data[count] = prevCOPI[1];
+                data[count] <= prevCOPI[1];
             end
         end else if(nsc_rise && data[0] && data[7:1] <= 7'd4 && count == 5'd16) begin
             case (data[7:1])
