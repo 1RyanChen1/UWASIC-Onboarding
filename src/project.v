@@ -27,6 +27,26 @@ module tt_um_uwasic_onboarding_Ryan (
   wire [7:0] en_reg_pwm_15_8;
   wire [7:0] pwm_duty_cycle;
 
+  spi_peripheral spi_peripheral_inst(
+    .clk(clk),
+    .rst_n(rst_n),
+    .COPI(ui_in[1]),
+    .SCLK(ui_in[0])
+    .cs(ui_in[2])
+    .en_reg_out_7_0(en_reg_out_7_0),
+    .en_reg_out_15_8(en_reg_out_15_8),
+    .en_reg_pwm_7_0(en_reg_pwm_7_0),
+    .en_reg_pwm_15_8(en_reg_pwm_15_8),
+    .pwm_duty_cycle(pwm_duty_cycle)
+  );
+  /*
+    input clk , input rst_n, input COPI, input cs, input SCLK, 
+    output reg [7:0] en_reg_out_7_0,
+    output reg [7:0] en_reg_out_15_8,
+    output reg [7:0] en_reg_pwm_7_0,
+    output reg [7:0] en_reg_pwm_15_8,
+    output reg [7:0] pwm_duty_cycle
+  */
   // Instantiate the PWM module
   pwm_peripheral pwm_peripheral_inst (
     .clk(clk),
@@ -41,6 +61,6 @@ module tt_um_uwasic_onboarding_Ryan (
   // Add uio_in and ui_in[7:3] to the list of unused signals:
   wire _unused = &{ena, ui_in[7:3], uio_in, 1'b0};
   // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, 1'b0};
+  // wire _unused = &{ena, clk, rst_n, 1'b0};
 
 endmodule
