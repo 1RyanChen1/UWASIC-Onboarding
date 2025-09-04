@@ -31,8 +31,8 @@ module tt_um_uwasic_onboarding_Ryan (
     .clk(clk),
     .rst_n(rst_n),
     .COPI(ui_in[1]),
-    .SCLK(ui_in[0])
-    .cs(ui_in[2])
+    .SCLK(ui_in[0]),
+    .cs(ui_in[2]),
     .en_reg_out_7_0(en_reg_out_7_0),
     .en_reg_out_15_8(en_reg_out_15_8),
     .en_reg_pwm_7_0(en_reg_pwm_7_0),
