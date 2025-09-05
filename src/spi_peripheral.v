@@ -8,14 +8,14 @@ module spi_peripheral (
 );
 reg [4:0] count;
 reg [15:0] data;
-reg [1:0] prevSCLK,prevCS,prevCOPI; 
+reg [1:0] sync_sclk,sync_ncs,sync_COPI; 
 wire sclk_rise,sclk_fall,nsc_fall, nsc_rise;
+reg prev_sclk, prev_ncs, prev_COPI;
 
-
-assign    nsc_fall = prevCS[0] & !prevCS[1];
-assign    nsc_rise = !prevCS[0] & prevCS[1];
-assign    sclk_fall = prevSCLK[0] & !prevSCLK[1];
-assign    sclk_rise = !prevSCLK[0] & prevSCLK[1];
+assign    nsc_fall = prev_ncs & !sync_ncs[1];
+assign    nsc_rise = !prev_ncs & sync_ncs[1];
+assign    sclk_fall = prev_sclk & !sync_sclk[1];
+assign    sclk_rise = !prev_sclk & sync_sclk[1];
 
 
 always @(posedge clk or negedge rst_n)begin
@@ -27,21 +27,32 @@ always @(posedge clk or negedge rst_n)begin
         en_reg_pwm_15_8 <= 8'b0;
         pwm_duty_cycle <= 8'b0;
         count <= 5'b0;
+        sync_sclk<= 2'b0;
+        sync_ncs<= 2'b0;
+        sync_COPI<= 2'b0;
+        data<= 16'b0;
+        prev_COPI <= 0;
+        prev_ncs <= 0;
+        prev_sclk <= 0;
     end else begin
-        prevCS[0] <= cs;
-        prevCS[1] <= prevCS[0];
-        prevSCLK[0] <= SCLK;
-        prevSCLK[1] <= prevSCLK[0];
-        prevCOPI[0] <= COPI;
-        prevCOPI[1] <= prevCOPI[0];
+        sync_ncs[0] <= cs;
+        sync_ncs[1] <= sync_ncs[0];
+        prev_ncs <= sync_ncs[1];
+        sync_sclk[0] <= SCLK;
+        sync_sclk[1] <= sync_sclk[0];
+        prev_ncs <= sync_sclk[1];
+        sync_COPI[0] <= COPI;
+        sync_COPI[1] <= sync_COPI[0];
+        prev_COPI <= sync_COPI[1];
+        
         if (nsc_fall) begin
             count <= 5'b0;
             data <= 16'd0;
-        end else if (sclk_rise && count < 5'd16 && !prevCS[1]) begin
+        end else if (sclk_rise && count < 5'd16 && !prev_ncs) begin
             if (count == 5'd0) begin
-                data[0] <= prevCOPI[1];
+                data[0] <= prev_COPI;
             end else if(data[0]) begin
-                data[15-count] <= prevCOPI[1];
+                data[15-count] <= prev_COPI;
             end 
             count <= count + 1;
         end else if(nsc_rise && data[0] && data[7:1] <= 7'd4 && count == 5'd16) begin
