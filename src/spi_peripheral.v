@@ -6,11 +6,11 @@ module spi_peripheral (
     output reg [7:0] en_reg_pwm_15_8,
     output reg [7:0] pwm_duty_cycle
 );
-reg [4:0] count;
-reg [15:0] data;
-reg [1:0] sync_sclk,sync_ncs,sync_COPI; 
-wire sclk_rise,sclk_fall,nsc_fall, nsc_rise;
-reg prev_sclk, prev_ncs, prev_COPI;
+reg [4:0] count = 0;
+reg [15:0] data = 0;
+reg [1:0] sync_sclk = 0,sync_ncs = 0,sync_COPI = 0; 
+wire sclk_rise = 0,sclk_fall = 0,nsc_fall = 0, nsc_rise = 0;
+reg prev_sclk = 0, prev_ncs = 0, prev_COPI = 0;
 
 assign    nsc_fall = prev_ncs & !sync_ncs[1];
 assign    nsc_rise = !prev_ncs & sync_ncs[1];
@@ -40,7 +40,7 @@ always @(posedge clk or negedge rst_n)begin
         prev_ncs <= sync_ncs[1];
         sync_sclk[0] <= SCLK;
         sync_sclk[1] <= sync_sclk[0];
-        prev_ncs <= sync_sclk[1];
+        prev_sclk <= sync_sclk[1];
         sync_COPI[0] <= COPI;
         sync_COPI[1] <= sync_COPI[0];
         prev_COPI <= sync_COPI[1];
