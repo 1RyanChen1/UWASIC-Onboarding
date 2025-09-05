@@ -37,12 +37,12 @@ always @(posedge clk or negedge rst_n)begin
         if (nsc_fall) begin
             count <= 5'b0;
             data <= 16'd0;
-        end else if (sclk_rise && count < 5'd16) begin
+        end else if (sclk_rise && count < 5'd16 && !prevCS[1]) begin
             if (count == 5'd0) begin
                 data[0] <= prevCOPI[1];
             end else if(data[0]) begin
                 data[count] <= prevCOPI[1];
-            end
+            end 
             count <= count + 1;
         end else if(nsc_rise && data[0] && data[7:1] <= 7'd4 && count == 5'd16) begin
             case (data[7:1])
