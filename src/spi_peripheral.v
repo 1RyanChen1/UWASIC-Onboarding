@@ -40,12 +40,12 @@ always @(posedge clk or negedge rst_n)begin
         prev_ncs <= sync_ncs[1];
         sync_sclk[0] <= SCLK;
         sync_sclk[1] <= sync_sclk[0];
-        prev_sclk <= sync_sclk[1];
+		prev_sclk <= sync_sclk[1];
         sync_COPI[0] <= COPI;
         sync_COPI[1] <= sync_COPI[0];
         prev_COPI <= sync_COPI[1];
         
-        if (nsc_fall) begin
+        if (nsc_fall && sclk_rise) begin
             count <= 5'b0;
             data <= 16'd0;
         end else if (sclk_rise && count < 5'd16 && !prev_ncs) begin
