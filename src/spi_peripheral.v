@@ -44,13 +44,13 @@ always @(posedge clk or negedge rst_n)begin
                 data[count] <= prevCOPI[1];
             end 
             count <= count + 1;
-        end else if(nsc_rise && data[0] && data[7:1] <= 7'd4 && count == 5'd16) begin
-            case (data[7:1])
-                7'h00: en_reg_out_7_0 <= data[15:8];
-                7'h01: en_reg_out_15_8 <= data[15:8];
-                7'h02: en_reg_pwm_7_0 <= data[15:8];
-                7'h03: en_reg_pwm_15_8 <= data[15:8];
-                7'h04: pwm_duty_cycle <= data[15:8];
+        end else if(nsc_rise && data[0] && data[1:7] <= 7'd4 && count == 5'd16) begin
+            case (data[1:7])
+                7'h00: en_reg_out_7_0 <= data[8:15];
+                7'h01: en_reg_out_15_8 <= data[8:15];
+                7'h02: en_reg_pwm_7_0 <= data[8:15];
+                7'h03: en_reg_pwm_15_8 <= data[8:15];
+                7'h04: pwm_duty_cycle <= data[8:15];
                 default: ;
             endcase                     
         end
