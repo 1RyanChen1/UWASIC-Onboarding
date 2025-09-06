@@ -48,13 +48,13 @@ always @(posedge clk or negedge rst_n)begin
         sclk_fall <= prev_sclk & !sync_sclk[1];
         sclk_rise <= !prev_sclk & sync_sclk[1];
         
-        if (nsc_fall && sclk_rise) begin
+        if (nsc_fall ) begin
             count <= 5'b0;
             data <= 16'd0;
         end else if (sclk_rise && count < 5'd16 && !prev_ncs) begin
             if (count == 5'd0) begin
                 data[15] <= prev_COPI;
-            end else if(data[0]) begin
+            end else if(data[15]) begin
                 data[15-count] <= prev_COPI;
             end 
             count <= count + 1;
