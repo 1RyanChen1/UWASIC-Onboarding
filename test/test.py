@@ -190,15 +190,25 @@ async def test_pwm_freq(dut):
         await with_timeout(Edge(dut.uo_out), 5, 'ms')
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
-            t1 = get_sim_time('ns'); break
+            t1 = get_sim_time('ns') 
+            break
         prev = cur
 
-# next rising (one full period later)
+# first falling
+    while True:
+        await with_timeout(Edge(dut.uo_out),5,'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 1 and cur == 0:
+            t1f = get_sim_time('ns')
+            break
+        prev = cur
+# second rising (one full period later)
     while True:
         await with_timeout(Edge(dut.uo_out), 5, 'ms')
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
-            t2 = get_sim_time('ns'); break
+            t2 = get_sim_time('ns')
+            break
         prev = cur
 
     period = t2 - t1
@@ -240,12 +250,31 @@ async def test_pwm_duty(dut):
     await send_spi_transaction(dut,1,0x04,128)
     await ClockCycles(dut.clk, 10000)
 
-    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')
-    t1 = cocotb.utils.get_sim_time('ns')
-    await with_timeout(FallingEdge(dut.uo_out.value & 0x01 ),5,'ms')
-    t1f = cocotb.utils.get_sim_time('ns')
-    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
-    t2 = cocotb.utils.get_sim_time('ns')
+    prev = 0
+    while True:
+        await with_timeout(Edge(dut.uo_out), 5, 'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 0 and cur == 1:
+            t1 = get_sim_time('ns') 
+            break
+        prev = cur
+
+# first falling
+    while True:
+        await with_timeout(Edge(dut.uo_out),5,'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 1 and cur == 0:
+            t1f = get_sim_time('ns')
+            break
+        prev = cur
+# second rising (one full period later)
+    while True:
+        await with_timeout(Edge(dut.uo_out), 5, 'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 0 and cur == 1:
+            t2 = get_sim_time('ns')
+            break
+        prev = cur
 
     period = t2 - t1
     high_time = t1f - t1   
@@ -261,12 +290,31 @@ async def test_pwm_duty(dut):
     await send_spi_transaction(dut,1,0x04,0)
     await ClockCycles(dut.clk, 10000)
 
-    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')
-    t1 = cocotb.utils.get_sim_time('ns')
-    await with_timeout(FallingEdge(dut.uo_out.value & 0x01 ),5,'ms')
-    t1f = cocotb.utils.get_sim_time('ns')
-    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
-    t2 = cocotb.utils.get_sim_time('ns')
+    prev = 0
+    while True:
+        await with_timeout(Edge(dut.uo_out), 5, 'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 0 and cur == 1:
+            t1 = get_sim_time('ns') 
+            break
+        prev = cur
+
+# first falling
+    while True:
+        await with_timeout(Edge(dut.uo_out),5,'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 1 and cur == 0:
+            t1f = get_sim_time('ns')
+            break
+        prev = cur
+# second rising (one full period later)
+    while True:
+        await with_timeout(Edge(dut.uo_out), 5, 'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 0 and cur == 1:
+            t2 = get_sim_time('ns')
+            break
+        prev = cur
     period = t2 - t1
     high_time = t1f - t1   
     duty = 100 * high_time/period
@@ -282,12 +330,31 @@ async def test_pwm_duty(dut):
     await send_spi_transaction(dut,1,0x04,0xff)
     await ClockCycles(dut.clk, 10000)
 
-    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')
-    t1 = cocotb.utils.get_sim_time('ns')
-    await with_timeout(FallingEdge(dut.uo_out.value & 0x01 ),5,'ms')
-    t1f = cocotb.utils.get_sim_time('ns')
-    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
-    t2 = cocotb.utils.get_sim_time('ns')
+    prev = 0
+    while True:
+        await with_timeout(Edge(dut.uo_out), 5, 'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 0 and cur == 1:
+            t1 = get_sim_time('ns') 
+            break
+        prev = cur
+
+# first falling
+    while True:
+        await with_timeout(Edge(dut.uo_out),5,'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 1 and cur == 0:
+            t1f = get_sim_time('ns')
+            break
+        prev = cur
+# second rising (one full period later)
+    while True:
+        await with_timeout(Edge(dut.uo_out), 5, 'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 0 and cur == 1:
+            t2 = get_sim_time('ns')
+            break
+        prev = cur
     period = t2 - t1
     high_time = t1f - t1   
     duty = 100 * high_time/period   
