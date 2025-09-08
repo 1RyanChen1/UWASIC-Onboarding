@@ -10,6 +10,7 @@ from cocotb.triggers import ClockCycles
 from cocotb.types import Logic
 from cocotb.types import LogicArray
 from cocotb.triggers import with_timeout, Timer
+from cocotb.utils import get_sim_time
 
 async def await_half_sclk(dut):
     """Wait for the SCLK signal to go high or low."""
@@ -180,10 +181,25 @@ async def test_pwm_freq(dut):
     await send_spi_transaction(dut,1,0x04,128)
     await ClockCycles(dut.clk, 10000)
 
-    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')
-    t1 = cocotb.utils.get_sim_time('ns')
-    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
-    t2 = cocotb.utils.get_sim_time('ns')
+    while int(dut.uo_out.value) & 1 == 1:
+        await with_timeout(Edge(dut.uo_out), 5, 'ms')
+
+# first rising
+    prev = 0
+    while True:
+        await with_timeout(Edge(dut.uo_out), 5, 'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 0 and cur == 1:
+            t1 = get_sim_time('ns'); break
+        prev = cur
+
+# next rising (one full period later)
+    while True:
+        await with_timeout(Edge(dut.uo_out), 5, 'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 0 and cur == 1:
+            t2 = get_sim_time('ns'); break
+        prev = cur
 
     period = t2 - t1
     freq = 1e9/period
@@ -196,7 +212,6 @@ async def test_pwm_freq(dut):
     )
     dut._log.info(f"Frequency: {freq:.2f} Hz (expected {expected:.2f} Hz)")
 
-    dut._log.info("PWM Frequency test completed successfully")
 
 @cocotb.test()
 async def test_pwm_duty(dut):
