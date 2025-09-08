@@ -191,15 +191,26 @@ async def test_pwm_freq(dut):
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
             t1 = get_sim_time('ns') 
+            prev = cur
             break
         prev = cur
 
+# first falling
+    while True:
+        await with_timeout(Edge(dut.uo_out),5,'ms')
+        cur = int(dut.uo_out.value) & 1
+        if prev == 1 and cur == 0:
+            t1f = get_sim_time('ns')
+            prev = cur
+            break
+        prev = cur
 # second rising (one full period later)
     while True:
         await with_timeout(Edge(dut.uo_out), 5, 'ms')
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
             t2 = get_sim_time('ns')
+            prev = cur
             break
         prev = cur
 
@@ -248,6 +259,7 @@ async def test_pwm_duty(dut):
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
             t1 = get_sim_time('ns') 
+            prev = cur
             break
         prev = cur
 
@@ -257,6 +269,7 @@ async def test_pwm_duty(dut):
         cur = int(dut.uo_out.value) & 1
         if prev == 1 and cur == 0:
             t1f = get_sim_time('ns')
+            prev = cur
             break
         prev = cur
 # second rising (one full period later)
@@ -265,6 +278,7 @@ async def test_pwm_duty(dut):
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
             t2 = get_sim_time('ns')
+            prev = cur
             break
         prev = cur
 
@@ -287,7 +301,8 @@ async def test_pwm_duty(dut):
         await with_timeout(Edge(dut.uo_out), 5, 'ms')
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
-            t1 = get_sim_time('ns') 
+            t1 = get_sim_time('ns')
+            prev = cur 
             break
         prev = cur
 
@@ -297,6 +312,7 @@ async def test_pwm_duty(dut):
         cur = int(dut.uo_out.value) & 1
         if prev == 1 and cur == 0:
             t1f = get_sim_time('ns')
+            prev = cur
             break
         prev = cur
 # second rising (one full period later)
@@ -305,6 +321,7 @@ async def test_pwm_duty(dut):
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
             t2 = get_sim_time('ns')
+            prev = cur
             break
         prev = cur
     period = t2 - t1
@@ -327,7 +344,8 @@ async def test_pwm_duty(dut):
         await with_timeout(Edge(dut.uo_out), 5, 'ms')
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
-            t1 = get_sim_time('ns') 
+            t1 = get_sim_time('ns')
+            prev = cur 
             break
         prev = cur
 
@@ -337,6 +355,7 @@ async def test_pwm_duty(dut):
         cur = int(dut.uo_out.value) & 1
         if prev == 1 and cur == 0:
             t1f = get_sim_time('ns')
+            prev = cur
             break
         prev = cur
 # second rising (one full period later)
@@ -345,6 +364,7 @@ async def test_pwm_duty(dut):
         cur = int(dut.uo_out.value) & 1
         if prev == 0 and cur == 1:
             t2 = get_sim_time('ns')
+            prev = cur
             break
         prev = cur
     period = t2 - t1
