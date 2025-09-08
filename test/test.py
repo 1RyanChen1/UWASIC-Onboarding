@@ -194,14 +194,6 @@ async def test_pwm_freq(dut):
             break
         prev = cur
 
-# first falling
-    while True:
-        await with_timeout(Edge(dut.uo_out),5,'ms')
-        cur = int(dut.uo_out.value) & 1
-        if prev == 1 and cur == 0:
-            t1f = get_sim_time('ns')
-            break
-        prev = cur
 # second rising (one full period later)
     while True:
         await with_timeout(Edge(dut.uo_out), 5, 'ms')
