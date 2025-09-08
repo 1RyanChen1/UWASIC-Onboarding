@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 
+ * Copyright (c) 2024 Ryan Chen
  * SPDX-License-Identifier: Apache-2.0
  */
 
