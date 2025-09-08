@@ -5,6 +5,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge
 from cocotb.triggers import FallingEdge
+from cocotb.triggers import Edge
 from cocotb.triggers import ClockCycles
 from cocotb.types import Logic
 from cocotb.types import LogicArray
@@ -179,9 +180,9 @@ async def test_pwm_freq(dut):
     await send_spi_transaction(dut,1,0x04,128)
     await ClockCycles(dut.clk, 10000)
 
-    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')
+    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')
     t1 = cocotb.utils.get_sim_time('ns')
-    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')   
+    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
     t2 = cocotb.utils.get_sim_time('ns')
 
     period = t2 - t1
@@ -224,11 +225,11 @@ async def test_pwm_duty(dut):
     await send_spi_transaction(dut,1,0x04,128)
     await ClockCycles(dut.clk, 10000)
 
-    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')
+    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')
     t1 = cocotb.utils.get_sim_time('ns')
-    await with_timeout(FallingEdge(dut.uo_out[0]),5,'ms')
+    await with_timeout(FallingEdge(dut.uo_out.value & 0x01 ),5,'ms')
     t1f = cocotb.utils.get_sim_time('ns')
-    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')   
+    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
     t2 = cocotb.utils.get_sim_time('ns')
 
     period = t2 - t1
@@ -245,11 +246,11 @@ async def test_pwm_duty(dut):
     await send_spi_transaction(dut,1,0x04,0)
     await ClockCycles(dut.clk, 10000)
 
-    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')
+    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')
     t1 = cocotb.utils.get_sim_time('ns')
-    await with_timeout(FallingEdge(dut.uo_out[0]),5,'ms')
+    await with_timeout(FallingEdge(dut.uo_out.value & 0x01 ),5,'ms')
     t1f = cocotb.utils.get_sim_time('ns')
-    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')   
+    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
     t2 = cocotb.utils.get_sim_time('ns')
     expected = 0
     tol = 0.01 * expected
@@ -263,11 +264,11 @@ async def test_pwm_duty(dut):
     await send_spi_transaction(dut,1,0x04,0)
     await ClockCycles(dut.clk, 10000)
 
-    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')
+    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')
     t1 = cocotb.utils.get_sim_time('ns')
-    await with_timeout(FallingEdge(dut.uo_out[0]),5,'ms')
+    await with_timeout(FallingEdge(dut.uo_out.value & 0x01 ),5,'ms')
     t1f = cocotb.utils.get_sim_time('ns')
-    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')   
+    await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
     t2 = cocotb.utils.get_sim_time('ns')
     expected = 100
     tol = 0.01 * expected
