@@ -158,9 +158,9 @@ async def test_pwm_freq(dut):
     cocotb.start_soon(clock.start())
 
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 1000)
     dut.rst_n.value = 1
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 1000)
 
     dut.ena.value = 1
 
