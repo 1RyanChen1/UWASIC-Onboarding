@@ -296,42 +296,9 @@ async def test_pwm_duty(dut):
     await send_spi_transaction(dut,1,0x04,0)
     await ClockCycles(dut.clk, 10000)
 
-    prev = 0
-    while True:
-        await with_timeout(Edge(dut.uo_out), 5, 'ms')
-        cur = int(dut.uo_out.value) & 1
-        if prev == 0 and cur == 1:
-            t1 = get_sim_time('ns')
-            prev = cur 
-            break
-        prev = cur
-
-# first falling
-    while True:
-        await with_timeout(Edge(dut.uo_out),5,'ms')
-        cur = int(dut.uo_out.value) & 1
-        if prev == 1 and cur == 0:
-            t1f = get_sim_time('ns')
-            prev = cur
-            break
-        prev = cur
-# second rising (one full period later)
-    while True:
-        await with_timeout(Edge(dut.uo_out), 5, 'ms')
-        cur = int(dut.uo_out.value) & 1
-        if prev == 0 and cur == 1:
-            t2 = get_sim_time('ns')
-            prev = cur
-            break
-        prev = cur
-    period = t2 - t1
-    high_time = t1f - t1   
-    duty = 100 * high_time/period
-    expected = 0
-    tol = 0.01 * expected
-    assert abs(duty - expected) <= tol, (
-    f"Measured {duty:.2f} %; expected {expected:.2f} % ±1%")   
-    dut._log.info(f"Duty Cycle: {duty:.2f} % (expected {expected:.2f} %)")
+    for _ in range(2 * 3328):  # ~2 PWM periods
+        assert int(dut.uo_out.value) & 1 == 0, "0%: expected stuck low"
+        await ClockCycles(dut.clk, 1)
 
     
 
@@ -339,41 +306,8 @@ async def test_pwm_duty(dut):
     await send_spi_transaction(dut,1,0x04,0xff)
     await ClockCycles(dut.clk, 10000)
 
-    prev = 0
-    while True:
-        await with_timeout(Edge(dut.uo_out), 5, 'ms')
-        cur = int(dut.uo_out.value) & 1
-        if prev == 0 and cur == 1:
-            t1 = get_sim_time('ns')
-            prev = cur 
-            break
-        prev = cur
-
-# first falling
-    while True:
-        await with_timeout(Edge(dut.uo_out),5,'ms')
-        cur = int(dut.uo_out.value) & 1
-        if prev == 1 and cur == 0:
-            t1f = get_sim_time('ns')
-            prev = cur
-            break
-        prev = cur
-# second rising (one full period later)
-    while True:
-        await with_timeout(Edge(dut.uo_out), 5, 'ms')
-        cur = int(dut.uo_out.value) & 1
-        if prev == 0 and cur == 1:
-            t2 = get_sim_time('ns')
-            prev = cur
-            break
-        prev = cur
-    period = t2 - t1
-    high_time = t1f - t1   
-    duty = 100 * high_time/period   
-    expected = 100
-    tol = 0.01 * expected
-    assert abs(duty - expected) <= tol, (
-    f"Measured {duty:.2f} %; expected {expected:.2f} % ±1%")   
-    dut._log.info(f"Duty Cycle: {duty:.2f} % (expected {expected:.2f} %)") 
+    for _ in range(2 * 3328):  # ~2 PWM periods
+        assert int(dut.uo_out.value) & 1 == 1, "100%: expected stuck low"
+        await ClockCycles(dut.clk, 1)
 
     dut._log.info("PWM Duty Cycle test completed successfully")
