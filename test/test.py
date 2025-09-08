@@ -252,6 +252,9 @@ async def test_pwm_duty(dut):
     t1f = cocotb.utils.get_sim_time('ns')
     await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
     t2 = cocotb.utils.get_sim_time('ns')
+    period = t2 - t1
+    high_time = t1f - t1   
+    duty = 100 * high_time/period
     expected = 0
     tol = 0.01 * expected
     assert abs(duty - expected) <= tol, (
@@ -261,7 +264,7 @@ async def test_pwm_duty(dut):
     
 
     # 100%
-    await send_spi_transaction(dut,1,0x04,0)
+    await send_spi_transaction(dut,1,0x04,0xff)
     await ClockCycles(dut.clk, 10000)
 
     await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')
@@ -270,6 +273,9 @@ async def test_pwm_duty(dut):
     t1f = cocotb.utils.get_sim_time('ns')
     await with_timeout(RisingEdge(dut.uo_out.value & 0x01 ),5,'ms')   
     t2 = cocotb.utils.get_sim_time('ns')
+    period = t2 - t1
+    high_time = t1f - t1   
+    duty = 100 * high_time/period   
     expected = 100
     tol = 0.01 * expected
     assert abs(duty - expected) <= tol, (
