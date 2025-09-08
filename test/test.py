@@ -171,13 +171,13 @@ async def test_pwm_freq(dut):
     dut.ui_in.value = ui_in_logicarray(1,0,0)
 
     await send_spi_transaction(dut,1,0x00,0x01)
-    await ClockCycles(dut.clk, 5000)
+    await ClockCycles(dut.clk, 10000)
 
     await send_spi_transaction(dut,1,0x02,0x01)
-    await ClockCycles(dut.clk, 5000)
+    await ClockCycles(dut.clk, 10000)
 
     await send_spi_transaction(dut,1,0x04,128)
-    await ClockCycles(dut.clk, 5000)
+    await ClockCycles(dut.clk, 10000)
 
     await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')
     t1 = cocotb.utils.get_sim_time('ns')
@@ -195,6 +195,7 @@ async def test_pwm_freq(dut):
     )
     dut._log.info(f"Frequency: {freq:.2f} Hz (expected {expected:.2f} Hz)")
 
+    dut._log.info("PWM Frequency test completed successfully")
 
 @cocotb.test()
 async def test_pwm_duty(dut):
@@ -214,14 +215,14 @@ async def test_pwm_duty(dut):
     dut.ui_in.value = ui_in_logicarray(1,0,0)
 
     await send_spi_transaction(dut,1,0x00,0x01)
-    await ClockCycles(dut.clk, 5000)
+    await ClockCycles(dut.clk, 10000)
 
     await send_spi_transaction(dut,1,0x02,0x01)
-    await ClockCycles(dut.clk, 5000)
+    await ClockCycles(dut.clk, 10000)
 
     # 50% duty cycle
     await send_spi_transaction(dut,1,0x04,128)
-    await ClockCycles(dut.clk, 5000)
+    await ClockCycles(dut.clk, 10000)
 
     await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')
     t1 = cocotb.utils.get_sim_time('ns')
@@ -229,5 +230,49 @@ async def test_pwm_duty(dut):
     t1f = cocotb.utils.get_sim_time('ns')
     await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')   
     t2 = cocotb.utils.get_sim_time('ns')
+
+    period = t2 - t1
+    high_time = t1f - t1   
+    duty = 100 * high_time/period
+    expected = 50
+    tol = 0.01 * expected
+    assert abs(duty - expected) <= tol, (
+    f"Measured {duty:.2f} %; expected {expected:.2f} % ±1%")   
+    dut._log.info(f"Duty Cycle: {duty:.2f} % (expected {expected:.2f} %)")
+
+
+    # 0%
+    await send_spi_transaction(dut,1,0x04,0)
+    await ClockCycles(dut.clk, 10000)
+
+    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')
+    t1 = cocotb.utils.get_sim_time('ns')
+    await with_timeout(FallingEdge(dut.uo_out[0]),5,'ms')
+    t1f = cocotb.utils.get_sim_time('ns')
+    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')   
+    t2 = cocotb.utils.get_sim_time('ns')
+    expected = 0
+    tol = 0.01 * expected
+    assert abs(duty - expected) <= tol, (
+    f"Measured {duty:.2f} %; expected {expected:.2f} % ±1%")   
+    dut._log.info(f"Duty Cycle: {duty:.2f} % (expected {expected:.2f} %)")
+
+    
+
+    # 100%
+    await send_spi_transaction(dut,1,0x04,0)
+    await ClockCycles(dut.clk, 10000)
+
+    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')
+    t1 = cocotb.utils.get_sim_time('ns')
+    await with_timeout(FallingEdge(dut.uo_out[0]),5,'ms')
+    t1f = cocotb.utils.get_sim_time('ns')
+    await with_timeout(RisingEdge(dut.uo_out[0]),5,'ms')   
+    t2 = cocotb.utils.get_sim_time('ns')
+    expected = 100
+    tol = 0.01 * expected
+    assert abs(duty - expected) <= tol, (
+    f"Measured {duty:.2f} %; expected {expected:.2f} % ±1%")   
+    dut._log.info(f"Duty Cycle: {duty:.2f} % (expected {expected:.2f} %)") 
 
     dut._log.info("PWM Duty Cycle test completed successfully")
